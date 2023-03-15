@@ -15,6 +15,9 @@
  *    Lesser General Public License for more details.
  */
 package it.geosolutions.imageioimpl.plugins.cog;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 /**
  * Provides configuration properties for the OkHttp client.  Attempts to read environment variables containing
@@ -30,11 +33,15 @@ public class HttpConfigurationProperties {
     private int maxRequestsPerHost;
     private int maxIdleConnections;
     private int keepAliveDuration;
+    private String httpProxyHost;
+    private int httpProxyPort;
 
     public final String HTTP_MAX_REQUESTS = "IIO_HTTP_MAX_REQUESTS";
     public final String HTTP_MAX_REQUESTS_PER_HOST = "IIO_HTTP_MAX_REQUESTS_PER_HOST";
     public final String HTTP_MAX_IDLE_CONNECTIONS = "IIO_HTTP_MAX_IDLE_CONNECTIONS";
     public final String HTTP_KEEP_ALIVE_TIME = "IIO_HTTP_KEEP_ALIVE_TIME";
+    public final String HTTP_PROXY_HOST = "HTTP_PROXY_HOST";
+    public final String HTTP_PROXY_PORT = "HTTP_PROXY_PORT";
 
     public HttpConfigurationProperties() {
         maxRequests = Integer.parseInt(
@@ -45,6 +52,8 @@ public class HttpConfigurationProperties {
                 PropertyLocator.getEnvironmentValue(HTTP_MAX_IDLE_CONNECTIONS, "5"));
         keepAliveDuration = Integer.parseInt(
                 PropertyLocator.getEnvironmentValue(HTTP_KEEP_ALIVE_TIME, "60"));
+        httpProxyHost = PropertyLocator.getEnvironmentValue(HTTP_PROXY_HOST, "localhost");
+        httpProxyPort = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_PROXY_PORT, "3128"));
     }
 
     public int getMaxRequests() {
@@ -61,5 +70,11 @@ public class HttpConfigurationProperties {
 
     public int getKeepAliveDuration() {
         return keepAliveDuration;
+    }
+
+    public Proxy getHttpProxy() {
+        SocketAddress addr = new InetSocketAddress(this.httpProxyHost, this.httpProxyPort);
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
+        return proxy;
     }
 }

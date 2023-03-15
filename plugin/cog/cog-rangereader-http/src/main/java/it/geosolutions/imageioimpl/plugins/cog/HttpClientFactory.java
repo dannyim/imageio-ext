@@ -47,6 +47,7 @@ public class HttpClientFactory {
                 TimeUnit.SECONDS);
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                .proxy(configProps.getHttpProxy())
                 .dispatcher(dispatcher)
                 .connectionPool(connectionPool);
 
